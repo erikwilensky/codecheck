@@ -1,0 +1,29 @@
+name: codecheck
+services:
+- name: web
+  source_dir: /
+  github:
+    repo: erikwilensky/codecheck
+    branch: digitalocean
+    deploy_on_push: true
+  run_command: python main.py
+  environment_slug: python
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  http_port: 8000
+  routes:
+  - path: /
+  health_check:
+    http_path: /health
+    initial_delay_seconds: 10
+    period_seconds: 10
+    timeout_seconds: 5
+    success_threshold: 1
+    failure_threshold: 3
+  envs:
+  - key: DATABASE_URL
+    value: sqlite:///./ai_assessment.db
+  - key: ADMIN_PASSWORD
+    value: admin123
+  - key: OPENAI_API_KEY
+    value: your_openai_api_key_here
