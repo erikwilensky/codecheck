@@ -1,52 +1,42 @@
 #!/usr/bin/env python3
 """
-Start script for AI Code Assessment System
+Render startup script for AI Code Assessment System
 """
 
 import os
 import sys
 from pathlib import Path
 
-def main():
-    """Start the server"""
-    print("🚀 Starting AI Code Assessment System...")
-    print("=" * 50)
-    
-    # Check if we're in the right directory
-    if not Path("app").exists():
-        print("❌ Error: 'app' directory not found!")
-        print("Make sure you're in the project root directory.")
-        sys.exit(1)
-    
-    # Check if .env exists
-    if not Path(".env").exists():
-        print("📝 Creating .env file from template...")
-        if Path("env.example").exists():
-            with open("env.example", "r") as f:
-                content = f.read()
-            with open(".env", "w") as f:
-                f.write(content)
-            print("✅ .env file created. Please update with your API keys.")
-        else:
-            print("⚠️ No env.example found. Creating basic .env...")
-            with open(".env", "w") as f:
-                f.write("OPENAI_API_KEY=your-api-key-here\n")
-    
-    print("✅ Environment ready")
-    print("🌐 Starting server on http://127.0.0.1:8000")
-    print("📝 Upload page: http://127.0.0.1:8000/upload")
-    print("📚 API docs: http://127.0.0.1:8000/docs")
-    print("\nPress Ctrl+C to stop the server")
-    print("=" * 50)
-    
-    # Start the server
-    import uvicorn
-    uvicorn.run(
-        "app.main:app",
-        host="127.0.0.1",
-        port=8000,
-        reload=True
-    )
+# Add project root to Python path
+project_root = Path(__file__).parent.absolute()
+if str(project_root) not in sys.path:
+    sys.path.insert(0, str(project_root))
 
+# Change to project directory
+os.chdir(project_root)
+
+# Set environment variables with defaults
+os.environ.setdefault('DATABASE_URL', 'sqlite:///./ai_assessment.db')
+os.environ.setdefault('ADMIN_PASSWORD', 'admin123')
+os.environ.setdefault('OPENAI_API_KEY', 'your_openai_api_key_here')
+os.environ.setdefault('PORT', '8000')
+os.environ.setdefault('RENDER', 'true')
+
+# Import and run the app
 if __name__ == "__main__":
-    main() 
+    import uvicorn
+    from app.main import app
+    
+    port = int(os.environ.get("PORT", 8000))
+    host = "0.0.0.0"
+    
+    print(f"🚀 Starting AI Code Assessment System on Render...")
+    print(f"🌐 Host: {host}")
+    print(f"🌐 Port: {port}")
+    
+    uvicorn.run(
+        app,
+        host=host,
+        port=port,
+        log_level="info"
+    )

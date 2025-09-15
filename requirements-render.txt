@@ -1,0 +1,26 @@
+# Render-optimized requirements for AI Code Assessment System
+# These versions are tested and compatible with Render's build environment
+
+# Core FastAPI dependencies
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+
+# Database
+sqlalchemy==2.0.23
+
+# AI and OpenAI
+openai==1.3.7
+
+# Environment and configuration
+python-dotenv==1.0.0
+python-multipart==0.0.6
+
+# PDF generation
+fpdf2==2.7.6
+
+# Data validation (using older version with pre-compiled wheels)
+pydantic==2.4.2
+
+# Authentication (optional for admin features)
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
