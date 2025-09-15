@@ -1,9 +1,10 @@
-# Minimal requirements for Render - no Rust dependencies
-fastapi==0.100.0
-uvicorn==0.23.0
-sqlalchemy==1.4.50
+# Render requirements matching local working version
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+sqlalchemy==2.0.23
 openai==1.3.7
 python-dotenv==1.0.0
 python-multipart==0.0.6
 fpdf2==2.7.6
+pydantic==2.4.2
 PyGithub==1.59.1
