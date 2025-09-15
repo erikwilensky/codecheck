@@ -1,0 +1,26 @@
+# Ultra-simple requirements for Render deployment
+# Avoiding all packages that require Rust compilation
+
+# Core FastAPI (minimal version)
+fastapi==0.100.0
+uvicorn==0.23.0
+
+# Database
+sqlalchemy==1.4.50
+
+# AI and OpenAI
+openai==1.3.7
+
+# Environment
+python-dotenv==1.0.0
+python-multipart==0.0.6
+
+# PDF generation
+fpdf2==2.7.6
+
+# Data validation (older version)
+pydantic==1.10.12
+
+# Authentication (simplified)
+python-jose==3.3.0
+passlib==1.7.4
