@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+openai
+python-dotenv
+python-multipart
+fpdf2
+werkzeug
+gunicorn
+asgiref 

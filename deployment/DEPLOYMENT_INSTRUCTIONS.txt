@@ -1,0 +1,114 @@
+# PythonAnywhere Deployment Instructions
+
+## QUICK FIX for "ModuleNotFoundError: No module named 'werkzeug'"
+
+If you're seeing this error, follow these steps immediately:
+
+1. **Open a Bash console** in PythonAnywhere
+2. **Activate your virtual environment:**
+   ```bash
+   workon ai-assessment
+   ```
+3. **Install missing dependencies:**
+   ```bash
+   cd ~/ai-assessment-system
+   pip install -r requirements.txt
+   ```
+4. **Reload your web app** in the Web tab
+
+## Directory Structure:
+Your AI Code Assessment System will be deployed to:
+/home/yourusername/ai-assessment-system/
+
+This keeps it separate from your other webapp in /home/yourusername/oyco-data/
+
+## Complete Setup Process:
+
+### 1. Upload Files
+Upload all files in this directory to: /home/yourusername/ai-assessment-system/
+
+### 2. Environment Setup
+1. **Create virtual environment:**
+   ```bash
+   mkvirtualenv --python=/usr/bin/python3.9 ai-assessment
+   ```
+2. **Install requirements:**
+   ```bash
+   cd ~/ai-assessment-system
+   pip install -r requirements.txt
+   ```
+
+### 3. Configure Environment Variables
+1. **Copy env.example to .env:**
+   ```bash
+   cp env.example .env
+   ```
+2. **Edit .env with your real values:**
+   ```bash
+   nano .env
+   ```
+   Update:
+   - OPENAI_API_KEY=your_actual_api_key
+   - ADMIN_PASSWORD=your_secure_password
+
+### 4. Database Setup
+```bash
+python init_db.py
+```
+
+### 5. WSGI Configuration
+1. **Edit wsgi.py** and replace 'yourusername' with your actual PythonAnywhere username
+2. **In PythonAnywhere Web tab,** replace WSGI file content with the wsgi.py content
+3. **IMPORTANT:** Do NOT put your API key directly in the WSGI file - use .env instead
+
+### 6. Static Files Setup
+- URL: /static/
+- Directory: /home/yourusername/ai-assessment-system/static/
+
+### 7. Domain Configuration
+Add your custom domain to the web app
+
+### 8. Reload Web App
+Click "Reload" in the Web tab
+
+## Troubleshooting:
+
+### Missing Dependencies Error:
+```bash
+workon ai-assessment
+cd ~/ai-assessment-system
+pip install werkzeug gunicorn asgiref uvicorn[standard]
+```
+
+### Environment Variables Not Loading:
+- Check .env file exists and has correct values
+- Ensure python-dotenv is installed: `pip install python-dotenv`
+
+### Database Errors:
+```bash
+cd ~/ai-assessment-system
+python init_db.py
+```
+
+### Import Errors:
+- Check that 'yourusername' is replaced with your actual username in wsgi.py
+- Verify all files are uploaded to correct directory
+
+## Security Notes:
+- Never put real API keys in wsgi.py file
+- Use .env file for sensitive data
+- Set a strong admin password
+- Keep .env file secure and don't share it
+
+## Files included:
+- app/ - Main application code
+- static/ - HTML/CSS/JS files
+- requirements.txt - Python dependencies (now includes werkzeug)
+- init_db.py - Database initialization
+- wsgi.py - Secure WSGI configuration
+- env.example - Environment variables template
+
+## Next steps after deployment:
+1. Test upload page: yourdomain.com/upload
+2. Test admin page: yourdomain.com/admin
+3. Check error logs in Web tab if issues occur

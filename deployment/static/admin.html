@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - AI Code Assessment System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* NIST Brand Colors */
+            --primary-navy: #002855;
+            --secondary-purple: #4F529B;
+            --accent-teal: #78D5E1;
+            --accent-green: #008A60;
+            --accent-gold: #FFB81C;
+            --accent-orange: #FF8F1C;
+            --accent-red: #E73C3E;
+            --text-dark: #333333;
+            --text-light: #4F529B;
+            --background-light: #F4F7FB;
+            --white: #FFFFFF;
+            --border-light: #E7F6F9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--background-light);
+            color: var(--text-dark);
+            line-height: 1.6;
+        }
+
+        .admin-header {
+            background: var(--white);
+            border-bottom: 2px solid var(--primary-navy);
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h1 {
+            color: var(--primary-navy);
+            text-align: center;
+            font-weight: 600;
+            font-size: 2.5rem;
+            margin: 0;
+        }
+
+        .admin-header p {
+            text-align: center;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-top: 2px solid var(--primary-navy);
+            overflow: hidden;
+        }
+
+        .card-header {
+            background: var(--primary-navy);
+            color: var(--white);
+            padding: 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .section-title {
+            color: var(--primary-navy);
+            font-weight: 600;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn {
+            background: var(--primary-navy);
+            color: var(--white);
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn:hover {
+            background: var(--accent-orange);
+            transform: translateY(-1px);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary-navy);
+            border: 2px solid var(--primary-navy);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary-navy);
+            color: var(--white);
+        }
+
+        .btn-success {
+            background: var(--accent-green);
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+        }
+
+        .btn-warning {
+            background: var(--accent-gold);
+            color: var(--text-dark);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--primary-navy);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #E5E7EB;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-navy);
+        }
+
+        .file-upload {
+            border: 2px dashed var(--accent-teal);
+            background: var(--border-light);
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary-navy);
+            background: var(--white);
+        }
+
+        .table-container {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-top: 2px solid var(--primary-navy);
+        }
+
+        .table-header {
+            background: var(--primary-navy);
+            color: var(--white);
+            padding: 1.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--background-light);
+            color: var(--primary-navy);
+            font-weight: 600;
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 2px solid var(--border-light);
+        }
+
+        .data-table td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+
+        .data-table tr:hover {
+            background: var(--background-light);
+        }
+
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .status-success {
+            background: var(--accent-green);
+            color: var(--white);
+        }
+
+        .status-warning {
+            background: var(--accent-gold);
+            color: var(--text-dark);
+        }
+
+        .status-error {
+            background: var(--accent-red);
+            color: var(--white);
+        }
+
+        .status-info {
+            background: var(--accent-teal);
+            color: var(--text-dark);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background: var(--white);
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 1.5rem;
+            top: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        .close:hover {
+            color: var(--primary-navy);
+        }
+
+        .status-message {
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            display: none;
+        }
+
+        .status-success {
+            background: var(--accent-green);
+            color: var(--white);
+        }
+
+        .status-error {
+            background: var(--accent-red);
+            color: var(--white);
+        }
+
+        .csv-template {
+            background: var(--border-light);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid var(--primary-navy);
+        }
+
+        .csv-template pre {
+            background: var(--white);
+            padding: 1rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+        }
+
+        .student-selection-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .student-selection {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            padding: 1rem;
+            background: var(--white);
+        }
+
+        .student-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.25rem;
+        }
+
+        .student-checkbox:hover {
+            background: var(--background-light);
+        }
+
+        .student-checkbox input[type="checkbox"] {
+            accent-color: var(--primary-navy);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            border-top: 3px solid var(--primary-navy);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-navy);
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .main-container {
+                padding: 0 1rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-header">
+        <div class="main-container">
+            <h1>🔧 Admin Dashboard</h1>
+            <p>Manage students, assignments, and generate quizzes</p>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <!-- Quiz Generation (full width) -->
+        <div class="card" id="quizGenerationCard">
+            <div class="card-header">
+                📄 Quiz Generation
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="form-label">Select Assignment:</label>
+                    <select id="assignmentSelect" class="form-control" required>
+                        <option value="">Choose an assignment...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select Students:</label>
+                    <div class="student-selection-header">
+                        <button type="button" id="selectAllBtn" class="btn btn-sm btn-secondary">
+                            ✅ Select All with Submissions
+                        </button>
+                        <button type="button" id="deselectAllBtn" class="btn btn-sm btn-secondary">
+                            ❌ Deselect All
+                        </button>
+                    </div>
+                    <div style="margin-bottom: 1rem;">
+                        <label for="quizBlockFilter" class="form-label">Filter by Block:</label>
+                        <select id="quizBlockFilter" class="form-control" style="width: 120px; display: inline-block;">
+                            <option value="">All</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <div class="student-selection" id="studentSelection">
+                        <p>Loading students...</p>
+                    </div>
+                </div>
+                <button id="generateQuizBtn" class="btn btn-success">
+                    📄 Generate Quiz PDF
+                </button>
+                <div class="status-message" id="quizStatus"></div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid (Assignment Management and Generated Quizzes) -->
+        <div class="dashboard-grid">
+            <!-- Assignment Management -->
+            <div class="card">
+                <div class="card-header">
+                    📝 Assignment Management
+                </div>
+                <div class="card-body">
+                    <button onclick="showCreateAssignmentForm()" class="btn">
+                        ➕ Create New Assignment
+                    </button>
+                    <button onclick="loadAssignments()" class="btn btn-secondary">
+                        🔄 Refresh Assignments
+                    </button>
+                    <div style="margin-top: 1rem;">
+                        <p class="form-label">Current Assignments:</p>
+                        <div id="assignmentList">
+                            <p>Loading assignments...</p>
+                        </div>
+                        <div class="status-message" id="assignmentStatus"></div>
+                    </div>
+                </div>
+            </div>
+            <!-- Generated Quizzes -->
+            <div class="card">
+                <div class="card-header">
+                    📚 Generated Quizzes
+                </div>
+                <div class="card-body">
+                    <button onclick="loadQuizPDFs()" class="btn btn-secondary">
+                        🔄 Refresh PDF List
+                    </button>
+                    <div style="margin-top: 1rem;">
+                        <p class="form-label">Recent Quiz PDFs:</p>
+                        <div id="recentPDFs">
+                            <p>Loading recent PDFs...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Student Management (moved to bottom) -->
+        <div class="card">
+            <div class="card-header">
+                👥 Student Management
+            </div>
+            <div class="card-body">
+                <div class="csv-template">
+                    <h4>📋 CSV Template</h4>
+                    <p>Upload a CSV file with student information:</p>
+                    <pre>name,student_id,block
+John Doe,STU001,4
+Jane Smith,STU002,6
+Bob Johnson,STU003,4</pre>
+                </div>
+                <form id="uploadForm">
+                    <div class="form-group">
+                        <label class="form-label">Upload Student CSV File</label>
+                        <input type="file" id="csvFile" name="file" accept=".csv" required class="form-control">
+                    </div>
+                    <button type="submit" class="btn">
+                        📤 Upload Student List
+                    </button>
+                </form>
+                <div class="status-message" id="uploadStatus"></div>
+                <div style="margin-top: 1.5rem;">
+                    <button onclick="loadStudents()" class="btn btn-secondary">
+                        🔄 Refresh Student List
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Tables Section -->
+        <div class="table-container">
+            <div class="table-header">
+                📊 Student Overview
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label for="blockFilter" class="form-label">Filter by Block:</label>
+                <select id="blockFilter" class="form-control" style="width: 120px; display: inline-block;">
+                    <option value="">All</option>
+                    <option value="4">4</option>
+                    <option value="6">6</option>
+                </select>
+            </div>
+            <table class="data-table" id="studentTable">
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>Name</th>
+                        <th>Block</th>
+                        <th>Submissions</th>
+                        <th>Latest Assignment</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 2rem;">
+                            Loading students...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div id="assignmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeAssignmentModal()">&times;</span>
+            <h3 id="assignmentModalTitle">📝 Create New Assignment</h3>
+            <form id="assignmentForm">
+                <input type="hidden" id="assignmentId" value="">
+                <div class="form-group">
+                    <label class="form-label">Assignment Name</label>
+                    <input type="text" id="assignmentName" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description</label>
+                    <textarea id="assignmentDescription" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Instructions</label>
+                    <textarea id="assignmentInstructions" class="form-control" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="assignmentActiveStatus" class="form-control">
+                        <option value="true">Active</option>
+                        <option value="false">Inactive</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn" id="assignmentSubmitBtn">Create Assignment</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Student Modal -->
+    <div id="studentModal" class="modal">
+        <div class="modal-content" style="max-width: 90%; max-height: 90%; overflow-y: auto;">
+            <span class="close" onclick="closeStudentModal()">&times;</span>
+            <h3 id="studentModalTitle">👤 Student Details</h3>
+            <div id="studentDetails">
+                <p>Loading student details...</p>
+            </div>
+            <div id="studentEditForm" style="display: none;">
+                <form id="editStudentForm">
+                    <input type="hidden" id="editStudentId" value="">
+                    <div class="form-group">
+                        <label class="form-label">Student ID</label>
+                        <input type="text" id="editStudentIdField" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Name</label>
+                        <input type="text" id="editStudentName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="editStudentStatus" class="form-control">
+                            <option value="true">Approved</option>
+                            <option value="false">Not Approved</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Block</label>
+                        <select id="editStudentBlock" class="form-control" required>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn">Update Student</button>
+                </form>
+            </div>
+            <div style="margin-top: 1rem;">
+                <button id="toggleEditBtn" class="btn btn-secondary" onclick="toggleStudentEdit()" style="display: none;">
+                    ✏️ Edit Student
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="adminLoginModal" class="modal" style="display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.7);">
+        <div class="modal-content" style="max-width: 350px; text-align: center;">
+            <h3>🔒 Admin Login</h3>
+            <p>Please enter the admin password to access this page.</p>
+            <input type="password" id="adminPasswordInput" class="form-control" placeholder="Admin Password" style="margin-bottom: 1rem;">
+            <button class="btn" id="adminLoginBtn">Login</button>
+            <div id="adminLoginError" style="color: var(--accent-red); margin-top: 1rem; display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudents();
+            loadAssignments();
+            loadQuizPDFs();
+            loadStudentsForQuiz();
+        });
+
+        // File upload handling
+        console.log('Attaching uploadForm submit handler');
+        window.onbeforeunload = () => { console.log('Page is reloading!'); };
+        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+            console.log('Form submit handler called');
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('csvFile');
+            if (!fileInput.files || fileInput.files.length === 0) {
+                showStatus('uploadStatus', 'Please select a CSV file to upload.', 'error');
+                return;
+            }
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);
+            
+            console.log('Uploading...');
+            try {
+                const response = await fetch('/admin/upload-students', {
+                    method: 'POST',
+                    body: formData
+                });
+                let result = {};
+                try {
+                    result = await response.json();
+                } catch (jsonErr) {
+                    // Not JSON, fallback to text
+                    const text = await response.text();
+                    result = { detail: text };
+                }
+                
+                if (response.ok) {
+                    showStatus('uploadStatus', `Successfully uploaded ${result.students_created} students!`, 'success');
+                    loadStudents();
+                    // Only reset the form on success
+                    console.log('Form reset called');
+                    document.getElementById('uploadForm').reset();
+                } else {
+                    showStatus('uploadStatus', `Error: ${result.detail || 'Upload failed'}`, 'error');
+                }
+            } catch (error) {
+                showStatus('uploadStatus', `Error: ${error.message}`, 'error');
+            }
+            console.log('Upload complete');
+        });
+
+        // Student management
+        async function loadStudents() {
+            const blockFilter = document.getElementById('blockFilter');
+            let url = '/admin/students';
+            if (blockFilter && blockFilter.value) {
+                url += `?block=${blockFilter.value}`;
+            }
+            try {
+                const response = await fetch(url);
+                const result = await response.json();
+                
+                const tbody = document.getElementById('studentTableBody');
+                tbody.innerHTML = '';
+                
+                if (result.students.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 2rem;">No students found.</td></tr>';
+                    return;
+                }
+                
+                result.students.forEach(student => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${student.student_id}</strong></td>
+                        <td>${student.name}</td>
+                        <td>${student.block}</td>
+                        <td>
+                            <span class="status-badge ${student.submission_count > 0 ? 'status-success' : 'status-warning'}">
+                                ${student.submission_count} submissions
+                            </span>
+                        </td>
+                        <td>${student.latest_assignment || 'None'}</td>
+                        <td>
+                            <span class="status-badge ${student.submission_count > 0 ? 'status-success' : 'status-info'}">
+                                ${student.submission_count > 0 ? 'Active' : 'No submissions'}
+                            </span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm" onclick="viewStudentDetails('${student.student_id}')">
+                                    👁️ View
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="editStudent('${student.student_id}')">
+                                    ✏️ Edit
+                                </button>
+                                <button class="btn btn-sm btn-danger" onclick="deleteStudent('${student.student_id}')">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading students:', error);
+                document.getElementById('studentTableBody').innerHTML = 
+                    '<tr><td colspan="7" style="text-align: center; color: var(--accent-red); padding: 2rem;">Error loading students</td></tr>';
+            }
+        }
+
+        // Assignment management
+        async function loadAssignments() {
+            try {
+                const response = await fetch('/admin/assignments');
+                const result = await response.json();
+                
+                const select = document.getElementById('assignmentSelect');
+                select.innerHTML = '<option value="">Choose an assignment...</option>';
+                
+                result.assignments.forEach(assignment => {
+                    if (assignment.is_active) {
+                        const option = document.createElement('option');
+                        option.value = assignment.name;
+                        option.textContent = assignment.name;
+                        select.appendChild(option);
+                    }
+                });
+                
+                // Update assignment list in assignment management section
+                updateAssignmentList(result.assignments);
+            } catch (error) {
+                console.error('Error loading assignments:', error);
+            }
+        }
+
+        // Update assignment list with status and toggle buttons
+        function updateAssignmentList(assignments) {
+            const container = document.getElementById('assignmentList');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (assignments.length === 0) {
+                container.innerHTML = '<p>No assignments found.</p>';
+                return;
+            }
+            
+            assignments.forEach(assignment => {
+                const div = document.createElement('div');
+                div.style.cssText = 'padding: 0.75rem; border: 1px solid var(--border-light); border-radius: 6px; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;';
+                
+                div.innerHTML = `
+                    <div>
+                        <strong>${assignment.name}</strong><br>
+                        <small>${assignment.submission_count} submissions • ${assignment.is_active ? 'Students can submit' : 'Students cannot submit'}</small>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-sm ${assignment.is_active ? 'btn-danger' : 'btn-success'}" 
+                                onclick="toggleAssignment(${assignment.id})">
+                            ${assignment.is_active ? '🚫 Deactivate' : '✅ Activate'}
+                        </button>
+                        <button class="btn btn-sm btn-secondary" onclick="editAssignment(${assignment.id})">
+                            ✏️ Edit
+                        </button>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Toggle assignment status
+        async function toggleAssignment(assignmentId) {
+            try {
+                const response = await fetch(`/admin/assignments/${assignmentId}/toggle`, {
+                    method: 'PATCH'
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('assignmentStatus', result.message, 'success');
+                    loadAssignments(); // Refresh the list
+                    updateStats();
+                } else {
+                    showStatus('assignmentStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('assignmentStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Quiz generation
+        async function loadStudentsForQuiz() {
+            const assignmentName = document.getElementById('assignmentSelect').value;
+            if (!assignmentName) {
+                document.getElementById('studentSelection').innerHTML = '<p>Please select an assignment.</p>';
+                return;
+            }
+            const quizBlockFilter = document.getElementById('quizBlockFilter');
+            let quizUrl = `/admin/students?assignment_name=${encodeURIComponent(assignmentName)}`;
+            if (quizBlockFilter && quizBlockFilter.value) {
+                quizUrl += `&block=${quizBlockFilter.value}`;
+            }
+            try {
+                const response = await fetch(quizUrl);
+                const result = await response.json();
+                const container = document.getElementById('studentSelection');
+                container.innerHTML = '';
+                result.students.forEach(student => {
+                    const div = document.createElement('div');
+                    div.className = 'student-checkbox';
+                    const hasSubmissions = student.submission_count > 0;
+                    div.innerHTML = `
+                        <input type="checkbox" id="student_${student.student_id}" value="${student.student_id}" ${hasSubmissions ? 'checked' : ''}>
+                        <label for="student_${student.student_id}">
+                            ${student.name} (${student.student_id}) - ${student.submission_count} submissions
+                        </label>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading students for quiz:', error);
+            }
+        }
+
+        // Select all students with submissions
+        document.getElementById('selectAllBtn').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('#studentSelection input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const label = checkbox.nextElementSibling;
+                const submissionCount = parseInt(label.textContent.match(/(\d+) submissions/)[1]);
+                if (submissionCount > 0) {
+                    checkbox.checked = true;
+                }
+            });
+        });
+
+        // Deselect all students
+        document.getElementById('deselectAllBtn').addEventListener('click', function() {
+            const checkboxes = document.querySelectorAll('#studentSelection input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                checkbox.checked = false;
+            });
+        });
+
+        // Quiz generation
+        document.getElementById('generateQuizBtn').addEventListener('click', async function() {
+            const assignmentName = document.getElementById('assignmentSelect').value;
+            const selectedStudents = getSelectedStudents();
+            
+            if (!assignmentName) {
+                alert('Please select an assignment');
+                return;
+            }
+            
+            if (selectedStudents.length === 0) {
+                alert('Please select at least one student with submissions');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/admin/generate-quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        assignment_name: assignmentName,
+                        student_ids: selectedStudents
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('quizStatus', `Quiz generated successfully! PDF ID: ${result.pdf_id}`, 'success');
+                    loadQuizPDFs();
+                    // Removed updateStats() since we removed the stats cards
+                } else {
+                    showStatus('quizStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('quizStatus', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // PDF management
+        async function loadQuizPDFs() {
+            try {
+                const response = await fetch('/admin/quiz-pdfs');
+                const result = await response.json();
+                
+                const container = document.getElementById('recentPDFs');
+                container.innerHTML = '';
+                
+                if (result.pdfs.length === 0) {
+                    container.innerHTML = '<p>No PDFs generated yet.</p>';
+                    return;
+                }
+                
+                result.pdfs.slice(0, 5).forEach(pdf => {
+                    const div = document.createElement('div');
+                    div.style.cssText = 'padding: 0.75rem; border: 1px solid var(--border-light); border-radius: 6px; margin-bottom: 0.5rem;';
+                    div.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>${pdf.assignment_name}</strong><br>
+                                <small>${pdf.student_count} students • ${new Date(pdf.created_at).toLocaleDateString()}</small>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm" onclick="downloadPDF(${pdf.id})">📥</button>
+                                <button class="btn btn-sm btn-danger" onclick="deletePDF(${pdf.id})">🗑️</button>
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            } catch (error) {
+                console.error('Error loading PDFs:', error);
+            }
+        }
+
+        // Utility functions
+        function getSelectedStudents() {
+            const checkboxes = document.querySelectorAll('#studentSelection input[type="checkbox"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function showStatus(elementId, message, type) {
+            // Try to find the element
+            let element = document.getElementById(elementId);
+            
+            // Debug logging
+            console.log(`showStatus called with elementId: ${elementId}, message: ${message}, type: ${type}`);
+            console.log(`Element found: ${element ? 'yes' : 'no'}`);
+            
+            // If element not found, try to find it in the current visible section
+            if (!element) {
+                // Look for any status element that might be visible
+                const statusElements = document.querySelectorAll('.status-message');
+                console.log(`Found ${statusElements.length} status elements`);
+                if (statusElements.length > 0) {
+                    element = statusElements[0]; // Use the first available status element
+                    console.log(`Using fallback status element: ${element.id || 'no id'}`);
+                }
+            }
+            
+            if (!element) {
+                console.warn(`Status element '${elementId}' not found. Message: ${message}`);
+                // Fallback to console and alert
+                console.log(`[${type.toUpperCase()}] ${message}`);
+                alert(`${type.toUpperCase()}: ${message}`);
+                return;
+            }
+            
+            try {
+                element.textContent = message;
+                element.className = `status-message status-${type}`;
+                element.style.display = 'block';
+                
+                setTimeout(() => {
+                    if (element && element.style.display === 'block') {
+                        element.style.display = 'none';
+                    }
+                }, 5000);
+            } catch (error) {
+                console.error(`Error setting status for ${elementId}:`, error);
+                console.log(`[${type.toUpperCase()}] ${message}`);
+                alert(`${type.toUpperCase()}: ${message}`);
+            }
+        }
+
+        function updateStats() {
+            // Stats cards were removed, so this function is no longer needed
+            // Keeping the function for compatibility but it does nothing
+            console.log('updateStats called but stats cards were removed');
+        }
+
+        function showCreateAssignmentForm() {
+            // Reset form for creating new assignment
+            const titleElement = document.getElementById('assignmentModalTitle');
+            const submitBtn = document.getElementById('assignmentSubmitBtn');
+            
+            if (titleElement) titleElement.textContent = '📝 Create New Assignment';
+            if (submitBtn) submitBtn.textContent = 'Create Assignment';
+            
+            const assignmentId = document.getElementById('assignmentId');
+            if (assignmentId) assignmentId.value = '';
+            
+            const form = document.getElementById('assignmentForm');
+            if (form) form.reset();
+            
+            const modal = document.getElementById('assignmentModal');
+            if (modal) modal.style.display = 'block';
+        }
+
+        async function editAssignment(assignmentId) {
+            try {
+                const response = await fetch(`/admin/assignments/${assignmentId}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const assignment = result.assignment;
+                    
+                    // Populate form with assignment data
+                    const titleElement = document.getElementById('assignmentModalTitle');
+                    const submitBtn = document.getElementById('assignmentSubmitBtn');
+                    const assignmentId = document.getElementById('assignmentId');
+                    const assignmentName = document.getElementById('assignmentName');
+                    const assignmentDescription = document.getElementById('assignmentDescription');
+                    const assignmentInstructions = document.getElementById('assignmentInstructions');
+                    const assignmentActiveStatus = document.getElementById('assignmentActiveStatus');
+                    const modal = document.getElementById('assignmentModal');
+                    
+                    if (titleElement) titleElement.textContent = '✏️ Edit Assignment';
+                    if (submitBtn) submitBtn.textContent = 'Update Assignment';
+                    if (assignmentId) assignmentId.value = assignment.id;
+                    if (assignmentName) assignmentName.value = assignment.name;
+                    if (assignmentDescription) assignmentDescription.value = assignment.description || '';
+                    if (assignmentInstructions) assignmentInstructions.value = assignment.instructions || '';
+                    if (assignmentActiveStatus) assignmentActiveStatus.value = assignment.is_active.toString();
+                    if (modal) modal.style.display = 'block';
+                } else {
+                    showStatus('assignmentStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('assignmentStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        function closeAssignmentModal() {
+            document.getElementById('assignmentModal').style.display = 'none';
+        }
+
+        // Student management functions
+        async function viewStudentDetails(studentId) {
+            try {
+                const response = await fetch(`/admin/students/${studentId}`);
+                const result = await response.json();
+                
+                if (response.ok) {
+                    const student = result.student;
+                    
+                    // Populate student details
+                    document.getElementById('studentDetails').innerHTML = `
+                        <div class="form-group">
+                            <label class="form-label"><strong>Student ID:</strong></label>
+                            <p>${student.student_id}</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Name:</strong></label>
+                            <p>${student.name}</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Status:</strong></label>
+                            <p><span class="status-badge ${student.is_approved ? 'status-success' : 'status-warning'}">
+                                ${student.is_approved ? 'Approved' : 'Not Approved'}
+                            </span></p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Block:</strong></label>
+                            <p>${student.block}</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Submissions:</strong></label>
+                            <ul style='padding-left: 1.2em;'>
+                                ${student.submissions && student.submissions.length > 0 ? student.submissions.map(sub => `
+                                    <li style='margin-bottom: 0.5em;'>
+                                        <strong>${sub.assignment_name}</strong> - ${sub.file_name || 'submission.txt'}
+                                        <button class='btn btn-sm btn-secondary' onclick='downloadSubmission(${sub.id}, "${sub.file_name || 'submission.txt'}")'>⬇️ Download</button>
+                                    </li>
+                                `).join('') : '<li>No submissions</li>'}
+                            </ul>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Latest Assignment:</strong></label>
+                            <p>${student.latest_assignment || 'None'}</p>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label"><strong>Created:</strong></label>
+                            <p>${new Date(student.created_at).toLocaleDateString()}</p>
+                        </div>
+                    `;
+                    
+                    // Show edit button
+                    const toggleBtn = document.getElementById('toggleEditBtn');
+                    const editForm = document.getElementById('studentEditForm');
+                    const editStudentId = document.getElementById('editStudentId');
+                    const editStudentIdField = document.getElementById('editStudentIdField');
+                    const editStudentName = document.getElementById('editStudentName');
+                    const editStudentStatus = document.getElementById('editStudentStatus');
+                    const editStudentBlock = document.getElementById('editStudentBlock');
+                    const modal = document.getElementById('studentModal');
+                    
+                    // In viewStudentDetails, after populating the form, define detailsDiv before using it
+                    const detailsDiv = document.getElementById('studentDetails');
+                    if (toggleBtn) toggleBtn.style.display = 'none';
+                    if (editForm) editForm.style.display = 'none';
+                    if (detailsDiv) detailsDiv.style.display = 'block';
+                    
+                    // Store student data for editing
+                    if (editStudentId) editStudentId.value = student.id;
+                    if (editStudentIdField) editStudentIdField.value = student.student_id;
+                    if (editStudentIdField) editStudentIdField.readOnly = true;
+                    if (editStudentName) editStudentName.value = student.name;
+                    if (editStudentStatus) editStudentStatus.value = student.is_approved.toString();
+                    if (editStudentBlock) editStudentBlock.value = student.block;
+                    if (modal) modal.style.display = 'block';
+                } else {
+                    showStatus('uploadStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('uploadStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        async function editStudent(studentId) {
+            // First view the student details, then switch to edit mode
+            await viewStudentDetails(studentId);
+            toggleStudentEdit();
+        }
+
+        function toggleStudentEdit() {
+            const detailsDiv = document.getElementById('studentDetails');
+            const editForm = document.getElementById('studentEditForm');
+            const toggleBtn = document.getElementById('toggleEditBtn');
+            
+            if (!detailsDiv || !editForm || !toggleBtn) {
+                console.warn('Student modal elements not found');
+                return;
+            }
+            
+            if (editForm.style.display === 'none') {
+                // Switch to edit mode
+                detailsDiv.style.display = 'none';
+                editForm.style.display = 'block';
+                toggleBtn.textContent = '👁️ View Details';
+            } else {
+                // Switch to view mode
+                detailsDiv.style.display = 'block';
+                editForm.style.display = 'none';
+                toggleBtn.textContent = '✏️ Edit Student';
+            }
+        }
+
+        function closeStudentModal() {
+            document.getElementById('studentModal').style.display = 'none';
+        }
+
+        async function downloadPDF(pdfId) {
+            try {
+                const response = await fetch(`/admin/quiz-pdfs/${pdfId}/download`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `quiz_${pdfId}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    alert('Failed to download PDF');
+                }
+            } catch (error) {
+                alert('Error downloading PDF');
+            }
+        }
+
+        async function deletePDF(pdfId) {
+            if (!confirm('Are you sure you want to delete this PDF? This action cannot be undone.')) return;
+            
+            try {
+                const response = await fetch(`/admin/quiz-pdfs/${pdfId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    // Use showStatus instead of alert, and don't call updateStats since we removed stats
+                    showStatus('quizStatus', 'PDF deleted successfully!', 'success');
+                    loadQuizPDFs();
+                } else {
+                    showStatus('quizStatus', 'Failed to delete PDF', 'error');
+                }
+            } catch (error) {
+                showStatus('quizStatus', `Error deleting PDF: ${error.message}`, 'error');
+            }
+        }
+
+        // Add the downloadSubmission function to JS
+        async function downloadSubmission(submissionId, fileName) {
+            try {
+                const response = await fetch(`/submissions/${submissionId}/download`);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = fileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } else {
+                    showStatus('uploadStatus', 'Failed to download submission', 'error');
+                }
+            } catch (error) {
+                showStatus('uploadStatus', `Error downloading submission: ${error.message}`, 'error');
+            }
+        }
+
+        // Assignment form submission
+        document.getElementById('assignmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const assignmentId = document.getElementById('assignmentId').value;
+            const isEditing = assignmentId !== '';
+            
+            const formData = {
+                name: document.getElementById('assignmentName').value,
+                description: document.getElementById('assignmentDescription').value,
+                instructions: document.getElementById('assignmentInstructions').value,
+                is_active: document.getElementById('assignmentActiveStatus').value === 'true'
+            };
+            
+            try {
+                const url = isEditing ? `/admin/assignments/${assignmentId}` : '/admin/assignments';
+                const method = isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    showStatus('assignmentStatus', result.message, 'success');
+                    closeAssignmentModal();
+                    loadAssignments(); // Refresh the assignment list
+                } else {
+                    showStatus('assignmentStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('assignmentStatus', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Student edit form submission
+        document.getElementById('editStudentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            // Use the student_id string, not the DB id
+            const studentId = document.getElementById('editStudentIdField').value;
+            const formData = {
+                student_id: document.getElementById('editStudentIdField').value,
+                name: document.getElementById('editStudentName').value,
+                block: document.getElementById('editStudentBlock').value,
+                is_approved: document.getElementById('editStudentStatus').value === 'true'
+            };
+            try {
+                const response = await fetch(`/admin/students/${studentId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    showStatus('uploadStatus', result.message, 'success');
+                    closeStudentModal();
+                    loadStudents(); // Refresh the student list
+                } else {
+                    showStatus('uploadStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('uploadStatus', `Error: ${error.message}`, 'error');
+            }
+        });
+
+        // Add the deleteStudent function
+        async function deleteStudent(studentId) {
+            if (!confirm('Are you sure you want to delete this student? This action cannot be undone.')) return;
+            try {
+                const response = await fetch(`/admin/students/${studentId}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (response.ok) {
+                    showStatus('uploadStatus', result.message, 'success');
+                    loadStudents();
+                } else {
+                    showStatus('uploadStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('uploadStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        // Load initial data
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStudents();
+            loadAssignments();
+            loadQuizPDFs();
+            loadStudentsForQuiz();
+        });
+
+        // Add event listener to assignmentSelect to reload students/checkmarks
+        const assignmentSelect = document.getElementById('assignmentSelect');
+        if (assignmentSelect) {
+            assignmentSelect.addEventListener('change', function() {
+                loadStudentsForQuiz();
+            });
+        }
+
+        // Add event listener to blockFilter to reload students
+        document.getElementById('blockFilter').addEventListener('change', loadStudents);
+
+        // Add event listener to quizBlockFilter to reload students for quiz
+        document.getElementById('quizBlockFilter').addEventListener('change', loadStudentsForQuiz);
+
+        // 3. Add Delete All Quizzes button and handler
+        // Add button to the Generated Quizzes card
+        (function() {
+            const cards = document.querySelectorAll('.card');
+            let quizzesCard = null;
+            cards.forEach(card => {
+                const header = card.querySelector('.card-header');
+                if (header && header.textContent.includes('Generated Quizzes')) {
+                    quizzesCard = card;
+                }
+            });
+            if (quizzesCard) {
+                const deleteAllBtn = document.createElement('button');
+                deleteAllBtn.className = 'btn btn-danger';
+                deleteAllBtn.style.marginTop = '1rem';
+                deleteAllBtn.textContent = '🗑️ Delete All Quizzes';
+                deleteAllBtn.onclick = deleteAllQuizzes;
+                quizzesCard.querySelector('.card-body').appendChild(deleteAllBtn);
+            }
+        })();
+        async function deleteAllQuizzes() {
+            if (!confirm('Are you sure you want to delete ALL quizzes? This action cannot be undone.')) return;
+            try {
+                const response = await fetch('/admin/quiz-pdfs/delete-all', { method: 'DELETE' });
+                const result = await response.json();
+                if (response.ok) {
+                    showStatus('quizStatus', result.message, 'success');
+                    loadQuizPDFs();
+                } else {
+                    showStatus('quizStatus', `Error: ${result.detail}`, 'error');
+                }
+            } catch (error) {
+                showStatus('quizStatus', `Error: ${error.message}`, 'error');
+            }
+        }
+
+        let adminPassword = null;
+
+        function showAdminLoginModal(errorMsg) {
+            document.getElementById('adminLoginModal').style.display = 'flex';
+            document.getElementById('adminPasswordInput').value = '';
+            document.getElementById('adminLoginError').style.display = errorMsg ? 'block' : 'none';
+            document.getElementById('adminLoginError').textContent = errorMsg || '';
+        }
+
+        function hideAdminLoginModal() {
+            document.getElementById('adminLoginModal').style.display = 'none';
+        }
+
+        document.getElementById('adminLoginBtn').onclick = async function() {
+            const pwd = document.getElementById('adminPasswordInput').value;
+            // Try a harmless admin API call to check password
+            const response = await fetch('/admin/students', {
+                headers: { 'X-Admin-Password': pwd }
+            });
+            if (response.status === 401) {
+                showAdminLoginModal('Incorrect password.');
+            } else {
+                adminPassword = pwd;
+                hideAdminLoginModal();
+                // Now reload all admin data
+                loadStudents();
+                loadAssignments();
+                loadQuizPDFs();
+                loadStudentsForQuiz();
+            }
+        };
+
+        // Intercept all fetch calls to admin API and add the password header
+        const origFetch = window.fetch;
+        window.fetch = async function(url, options = {}) {
+            if (url.startsWith('/admin/') && adminPassword) {
+                options.headers = options.headers || {};
+                options.headers['X-Admin-Password'] = adminPassword;
+            }
+            const resp = await origFetch(url, options);
+            // If unauthorized, show login modal again
+            if (url.startsWith('/admin/') && resp.status === 401) {
+                showAdminLoginModal('Session expired or incorrect password.');
+            }
+            return resp;
+        };
+
+        // On page load, show login modal
+        window.addEventListener('DOMContentLoaded', function() {
+            showAdminLoginModal();
+        });
+    </script>
+</body>
+</html> 
