@@ -1,14 +1,14 @@
 import os
-import openai
 from typing import Dict, Any, List
 from sqlalchemy.orm import Session
 from ..models import Submission, Analysis, Quiz, QuizQuestion, Student
 from datetime import datetime
 import json
+from .openai_client import get_client_or_none
 
 class AIAnalysisService:
     def __init__(self):
-        self.openai_client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.openai_client = get_client_or_none()
     
     def analyze_submission_with_ai(self, submission: Submission, db: Session) -> Analysis:
         """Use OpenAI to analyze code submission"""
@@ -528,7 +528,10 @@ async def generate_quiz_questions(code_content: str, assignment_name: str) -> Li
             return create_intelligent_questions(code_content, assignment_name)
         
         # Only create client if we have a real API key
-        client = OpenAI(api_key=api_key)
+        client = get_client_or_none()
+        if not client:
+            print("Debug: No OpenAI client available, using intelligent questions...")
+            return create_intelligent_questions(code_content, assignment_name)
         
         # Create a much more specific and detailed prompt
         prompt = f"""
