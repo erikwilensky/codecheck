@@ -48,10 +48,14 @@ class QuizGenerationService:
             
             print(f"DEBUG function_schema: {json.dumps(function_schema, indent=2)}")
             print(f"DEBUG function_call: {{'name': 'create_quiz'}}")
+            print(f"DEBUG client type: {type(self.client)}")
+            print(f"DEBUG client has 'chat': {hasattr(self.client, 'chat')}")
+            print(f"DEBUG client has 'ChatCompletion': {hasattr(self.client, 'ChatCompletion')}")
             
             # Use function calling for guaranteed JSON response
             # Check if we have the modern SDK or legacy SDK
-            if hasattr(self.client, 'chat'):
+            # Modern SDK has 'chat' attribute, legacy SDK has 'ChatCompletion'
+            if hasattr(self.client, 'chat') and not hasattr(self.client, 'ChatCompletion'):
                 # Modern SDK (openai>=1.x)
                 response = self.client.chat.completions.create(
                     model="gpt-4o-mini",
@@ -100,7 +104,7 @@ class QuizGenerationService:
             print(f"DEBUG raw message: {choice.message}")
             
             # Handle both modern and legacy API formats
-            if hasattr(self.client, 'chat'):
+            if hasattr(self.client, 'chat') and not hasattr(self.client, 'ChatCompletion'):
                 # Modern SDK - check for tool calls
                 print(f"DEBUG tool_calls: {choice.message.tool_calls}")
                 print(f"DEBUG content: {choice.message.content}")
