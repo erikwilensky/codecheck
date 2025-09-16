@@ -50,45 +50,90 @@ class QuizGenerationService:
             print(f"DEBUG function_call: {{'name': 'create_quiz'}}")
             
             # Use function calling for guaranteed JSON response
-            response = self.client.ChatCompletion.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {
-                        "role": "system", 
-                        "content": "You are an expert programming instructor creating quiz questions to verify that beginner Python students actually wrote and understand their own code. Return ONLY 5 numbered questions (1-5) as plain text with no answer spaces or explanations."
-                    },
-                    {
-                        "role": "user",
-                        "content": self._create_prompt(code_content, assignment_name)
-                    }
-                ],
-                functions=[function_schema],
-                function_call={"name": "create_quiz"},
-                temperature=0.6,
-                max_tokens=1200
-            )
+            # Check if we have the modern SDK or legacy SDK
+            if hasattr(self.client, 'chat'):
+                # Modern SDK (openai>=1.x)
+                response = self.client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {
+                            "role": "system", 
+                            "content": "You are an expert programming instructor creating quiz questions to verify that beginner Python students actually wrote and understand their own code. Return ONLY 5 numbered questions (1-5) as plain text with no answer spaces or explanations."
+                        },
+                        {
+                            "role": "user",
+                            "content": self._create_prompt(code_content, assignment_name)
+                        }
+                    ],
+                    tools=[{
+                        "type": "function",
+                        "function": function_schema
+                    }],
+                    tool_choice={"type": "function", "function": {"name": "create_quiz"}},
+                    temperature=0.6,
+                    max_tokens=1200
+                )
+            else:
+                # Legacy SDK (openai==0.x)
+                response = self.client.ChatCompletion.create(
+                    model="gpt-4o-mini",
+                    messages=[
+                        {
+                            "role": "system", 
+                            "content": "You are an expert programming instructor creating quiz questions to verify that beginner Python students actually wrote and understand their own code. Return ONLY 5 numbered questions (1-5) as plain text with no answer spaces or explanations."
+                        },
+                        {
+                            "role": "user",
+                            "content": self._create_prompt(code_content, assignment_name)
+                        }
+                    ],
+                    functions=[function_schema],
+                    function_call={"name": "create_quiz"},
+                    temperature=0.6,
+                    max_tokens=1200
+                )
             
             # Guard against silent schema mismatch
             choice = response.choices[0]
             
             # Debug: Log the raw message
             print(f"DEBUG raw message: {choice.message}")
-            print(f"DEBUG function_call: {choice.message.function_call}")
-            print(f"DEBUG content: {choice.message.content}")
             
-            # Guarantee we never look at .content
-            if choice.message.content and not choice.message.function_call:
-                raise RuntimeError(
-                    "Model returned plain text instead of calling create_quiz:\n"
-                    f"{choice.message.content[:200]}..."
-                )
+            # Handle both modern and legacy API formats
+            if hasattr(self.client, 'chat'):
+                # Modern SDK - check for tool calls
+                print(f"DEBUG tool_calls: {choice.message.tool_calls}")
+                print(f"DEBUG content: {choice.message.content}")
+                
+                if choice.message.content and not choice.message.tool_calls:
+                    raise RuntimeError(
+                        "Model returned plain text instead of calling create_quiz:\n"
+                        f"{choice.message.content[:200]}..."
+                    )
 
-            if not choice.message.function_call:
-                raise RuntimeError("No function_call — schema mismatch or wrong model")
-            
-            # Parse function call arguments (guaranteed JSON)
-            function_args = choice.message.function_call.arguments
-            quiz_data = json.loads(function_args)
+                if not choice.message.tool_calls:
+                    raise RuntimeError("No tool_calls — schema mismatch or wrong model")
+                
+                # Parse tool call arguments (guaranteed JSON)
+                function_args = choice.message.tool_calls[0].function.arguments
+                quiz_data = json.loads(function_args)
+            else:
+                # Legacy SDK - check for function calls
+                print(f"DEBUG function_call: {choice.message.function_call}")
+                print(f"DEBUG content: {choice.message.content}")
+                
+                if choice.message.content and not choice.message.function_call:
+                    raise RuntimeError(
+                        "Model returned plain text instead of calling create_quiz:\n"
+                        f"{choice.message.content[:200]}..."
+                    )
+
+                if not choice.message.function_call:
+                    raise RuntimeError("No function_call — schema mismatch or wrong model")
+                
+                # Parse function call arguments (guaranteed JSON)
+                function_args = choice.message.function_call.arguments
+                quiz_data = json.loads(function_args)
             
             # Convert to QuizQuestion objects
             questions = []
