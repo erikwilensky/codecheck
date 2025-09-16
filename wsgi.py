@@ -17,8 +17,8 @@ os.environ.setdefault('OPENAI_API_KEY', 'your_openai_api_key_here')
 os.environ.setdefault('DATABASE_URL', 'sqlite:///./ai_assessment.db')
 os.environ.setdefault('ADMIN_PASSWORD', 'your_secure_admin_password')
 
-# Import your FastAPI app
-from app.main import app
+# Import your FastAPI app (PythonAnywhere-optimized version)
+from app.main_pythonanywhere import app
 
 # For WSGI - PythonAnywhere expects 'application'
 application = app 
