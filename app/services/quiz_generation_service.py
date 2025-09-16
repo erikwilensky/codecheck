@@ -50,8 +50,7 @@ class QuizGenerationService:
             print(f"DEBUG function_call: {{'name': 'create_quiz'}}")
             
             # Use function calling for guaranteed JSON response
-            response = await asyncio.to_thread(
-                self.client.chat.completions.create,
+            response = self.client.chat.completions.create(
                 model="gpt-4o-mini",
                 messages=[
                     {
