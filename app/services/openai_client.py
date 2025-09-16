@@ -26,7 +26,9 @@ def get_client_or_none() -> Optional[Any]:
     - If legacy SDK (openai==0.x), returns the legacy 'openai' module after setting api_key
     """
     api_key = os.getenv("OPENAI_API_KEY")
+    print(f"DEBUG: OPENAI_API_KEY from env: {api_key[:20] if api_key else 'None'}...")
     if not api_key:
+        print("DEBUG: No API key found, returning None")
         return None
 
     # Optional: allow overriding base URL / org if you use a proxy or Azure
