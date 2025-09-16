@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script to check if quiz generation works locally
+Test script to verify the openai_client fix works
 """
 
 import os
@@ -16,24 +16,23 @@ if str(project_root) not in sys.path:
 os.chdir(project_root)
 
 # Set environment variables
-os.environ.setdefault('OPENAI_API_KEY', 'your_openai_api_key_here')
+os.environ.setdefault('OPENAI_API_KEY', 'sk-test-key')
 os.environ.setdefault('ADMIN_PASSWORD', 'quizscope!')
 os.environ.setdefault('DATABASE_URL', 'sqlite:///./ai_assessment.db')
 
-# Test the quiz generation service
 try:
-    from app.services.quiz_generation_service import QuizGenerationService
+    from app.services.openai_client import get_client_or_none
     
-    print("Testing quiz generation service...")
-    service = QuizGenerationService()
-    print(f"Client: {service.client}")
+    print("Testing openai_client fix...")
+    client = get_client_or_none()
     
-    if service.client:
-        print("OpenAI client created successfully!")
+    if client:
+        print(f"✅ Client created successfully: {type(client)}")
+        print(f"Client type: {client}")
     else:
-        print("No OpenAI client available")
+        print("❌ No client created (API key not set)")
         
 except Exception as e:
-    print(f"Error: {e}")
+    print(f"❌ Error: {e}")
     import traceback
     traceback.print_exc()

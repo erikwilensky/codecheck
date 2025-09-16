@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test script to check if quiz generation works locally
+Test script to check OpenAI version and client creation
 """
 
 import os
@@ -20,20 +20,22 @@ os.environ.setdefault('OPENAI_API_KEY', 'your_openai_api_key_here')
 os.environ.setdefault('ADMIN_PASSWORD', 'quizscope!')
 os.environ.setdefault('DATABASE_URL', 'sqlite:///./ai_assessment.db')
 
-# Test the quiz generation service
 try:
-    from app.services.quiz_generation_service import QuizGenerationService
+    import openai
+    print(f"OpenAI version: {openai.__version__}")
+    print(f"OpenAI module: {openai}")
     
-    print("Testing quiz generation service...")
-    service = QuizGenerationService()
-    print(f"Client: {service.client}")
+    # Test the old API format
+    openai.api_key = "test-key"
+    print("Old API format works")
     
-    if service.client:
-        print("OpenAI client created successfully!")
-    else:
-        print("No OpenAI client available")
-        
+    # Test the new API format
+    from openai import OpenAI
+    client = OpenAI(api_key="test-key")
+    print("New API format works")
+    
 except Exception as e:
     print(f"Error: {e}")
     import traceback
     traceback.print_exc()
+
